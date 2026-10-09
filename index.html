@@ -84,3 +84,16 @@ document.getElementById("whatsappBtn").addEventListener("click",()=>{let number=
 renderProducts();renderCart();
 </script>
 </body></html>
+const SELLER_WHATSAPP = "91XXXXXXXXXX";
+
+document.getElementById("whatsappBtn").addEventListener("click",()=>{
+  const number = SELLER_WHATSAPP.replace(/\D/g,"");
+  if(!/^91[6-9]\d{9}$/.test(number)){
+    alert("Seller ka WhatsApp number sahi set karo.");
+    return;
+  }
+  window.open(
+    "https://wa.me/"+number+"?text="+encodeURIComponent(lastSummary),
+    "_blank"
+  );
+});
