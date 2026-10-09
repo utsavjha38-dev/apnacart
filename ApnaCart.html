@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApnaCart — Local Shopping</title>
+<style>
+:root{--blue:#123b72;--gold:#ffca45;--bg:#f4f7fb;--ink:#182333;--muted:#64748b;--green:#138a52}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#0c2d59,#1761a8);color:white;padding:22px 16px 26px}
+.wrap{max-width:1000px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-weight:900;font-size:27px;letter-spacing:-.6px}.logo span{color:var(--gold)}
+.tag{margin-top:10px;color:#e6efff}.pill{background:var(--gold);color:#16233a;padding:10px 14px;border-radius:22px;font-weight:700;border:0}
+main{max-width:1000px;margin:20px auto;padding:0 14px}.notice{background:#fff8df;border:1px solid #f3d36a;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.45;margin-bottom:18px}
+h2{font-size:21px;margin:18px 0 12px}.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:13px}
+.card{background:white;border-radius:15px;padding:13px;box-shadow:0 3px 13px #172c4710;border:1px solid #e5eaf1}
+.emoji{height:86px;border-radius:11px;background:#edf4ff;display:grid;place-items:center;font-size:48px}
+.name{font-weight:700;margin:10px 0 5px}.desc{color:var(--muted);font-size:12px;min-height:28px}.price{font-weight:800;margin:10px 0}.add{width:100%;border:0;background:var(--blue);color:white;padding:10px;border-radius:9px;font-weight:700;cursor:pointer}
+.columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:20px}.panel{background:white;padding:16px;border-radius:15px;border:1px solid #e5eaf1}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:#fff}textarea{min-height:72px;resize:vertical}
+button{cursor:pointer}.submit{background:var(--green);color:white;border:0;border-radius:10px;padding:13px;width:100%;font-weight:800;margin-top:13px}
+.cartline{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #edf0f4;font-size:14px}.qty button{border:1px solid #cbd5e1;background:white;border-radius:6px;padding:2px 7px;margin:0 4px}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;padding-top:13px}
+.small{font-size:12px;color:var(--muted);line-height:1.5}.empty{color:var(--muted);font-size:14px;padding:12px 0}
+footer{text-align:center;padding:25px 15px;color:var(--muted);font-size:12px}
+#confirmation{display:none;background:#e7f8ef;border:1px solid #9ad9b6;border-radius:12px;padding:14px;margin-top:14px;white-space:pre-wrap;line-height:1.5}
+@media(max-width:700px){.columns{grid-template-columns:1fr}.logo{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div class="logo">🛍️ Apna<span>Cart</span></div><button class="pill" onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">🛒 Cart: <span id="cartCount">0</span></button></div>
+  <div class="tag">Aapke local area ki shopping, ek hi jagah par.</div>
+</div></header>
+<main>
+  <div class="notice"><b>Starter version:</b> Customer order details bharega aur “WhatsApp par Order Bhejein” dabayega. WhatsApp message aapke business number par khulega; customer ko Send dabana hoga. Publish karne se pehle owner ko SELLER_WHATSAPP mein apna number set karna hai. Sample products aur prices ko apne real products aur shopkeeper-confirmed rates se replace karein. Abhi orders sirf isi device/browser par dikhte hain—kisi shop ya delivery person ko automatically nahi jaate. Real business shuru karne se pehle shopkeeper ki permission, final prices aur delivery charges confirm karein.</div>
+  <h2>Popular Products</h2>
+  <div class="products" id="products"></div>
+  <div class="columns" id="order">
+<section class="panel"><h2 style="margin-top:0">Aapka Cart</h2><div id="cart"><div class="empty">Abhi cart khaali hai. Product par “Add” dabayein.</div></div><div class="total"><span>Total</span><span id="total">₹0</span></div><p class="small">Demo prices sirf example hain. Order confirm karne se pehle dukaan se availability aur rate verify karein.</p></section>
+    <section class="panel"><h2 style="margin-top:0">Delivery Details</h2>
+      <form id="orderForm">
+        <label for="customer">Naam *</label><input id="customer" required placeholder="Aapka naam">
+        <label for="phone">Mobile number *</label><input id="phone" required inputmode="tel" pattern="[0-9+\-\s]{10,15}" placeholder="10 digit mobile number">
+        <label for="address">Delivery address *</label><textarea id="address" required placeholder="Ghar number, gali, area"></textarea>
+        <label for="area">Area / PIN code</label><input id="area" placeholder="Jaise Barakar, 713324">
+        <label for="payment">Payment preference</label><select id="payment"><option>Delivery par payment (shop se confirm karein)</option><option>UPI (sirf seller ki pushti ke baad)</option></select>
+        <button class="submit" type="submit">Order Summary Banayein</button>
+      </form>
+      <div id="confirmation"></div>
+      <button id="copyBtn" class="submit" style="display:none;background:#123b72" type="button">Summary Copy Karein</button>
+      <button id="whatsappBtn" class="submit" style="display:none;background:#128c4a" type="button">WhatsApp par Order Bhejein</button>
+      <p class="small">WhatsApp khulne par customer message check karke Send dabayega. Isse order aapke WhatsApp par aayega. Yeh website payment collect nahi karti.</p>
+    </section>
+  </div>
+</main>
+<footer>ApnaCart • Free starter demo • Baad mein real ordering, stock, payment aur delivery system joda ja sakta hai.</footer>
+<script>
+const products=[
+ {id:1,name:"Basic T-Shirt",desc:"Example product · size confirm karein",price:299,emoji:"👕"},
+ {id:2,name:"Jeans",desc:"Example product · size confirm karein",price:699,emoji:"👖"},
+ {id:3,name:"Mobile Cover",desc:"Model availability confirm karein",price:149,emoji:"📱"},
+ {id:4,name:"Sports Shoes",desc:"Example product · size confirm karein",price:799,emoji:"👟"},
+ {id:5,name:"School Bag",desc:"Example product · stock confirm karein",price:399,emoji:"🎒"},
+ {id:6,name:"Water Bottle",desc:"Example product · stock confirm karein",price:99,emoji:"🥤"}
+];
+let cart={};let lastSummary="";
+const rupees=n=>"₹"+n.toLocaleString("en-IN");
+function renderProducts(){document.getElementById("products").innerHTML=products.map(p=>`<article class="card"><div class="emoji">${p.emoji}</div><div class="name">${p.name}</div><div class="desc">${p.desc}</div><div class="price">${rupees(p.price)}</div><button class="add" onclick="add(${p.id})">+ Add to Cart</button></article>`).join("")}
+function add(id){cart[id]=(cart[id]||0)+1;renderCart()}
+function change(id,delta){cart[id]=(cart[id]||0)+delta;if(cart[id]<=0)delete cart[id];renderCart()}
+function renderCart(){let ids=Object.keys(cart);document.getElementById("cartCount").textContent=ids.reduce((s,id)=>s+cart[id],0);let sum=0;
+ if(!ids.length){document.getElementById("cart").innerHTML='<div class="empty">Abhi cart khaali hai. Product par “Add” dabayein.</div>'}
+ else{document.getElementById("cart").innerHTML=ids.map(id=>{let p=products.find(x=>x.id==id),q=cart[id];sum+=p.price*q;return `<div class="cartline"><div><b>${p.emoji} ${p.name}</b><br>${rupees(p.price)} × ${q}</div><div class="qty"><button type="button" onclick="change(${id},-1)">−</button>${q}<button type="button" onclick="change(${id},1)">+</button></div></div>`}).join("")}
+ document.getElementById("total").textContent=rupees(sum);document.getElementById("confirmation").style.display="none";document.getElementById("copyBtn").style.display="none"}
+document.getElementById("orderForm").addEventListener("submit",e=>{e.preventDefault();if(!Object.keys(cart).length){alert("Pehle cart mein product add karein.");return}
+ let name=document.getElementById("customer").value.trim(),phone=document.getElementById("phone").value.trim(),address=document.getElementById("address").value.trim(),area=document.getElementById("area").value.trim(),payment=document.getElementById("payment").value;
+ let lines=Object.keys(cart).map(id=>{let p=products.find(x=>x.id==id);return `- ${p.name} x ${cart[id]} = ${rupees(p.price*cart[id])}`});
+ let total=Object.keys(cart).reduce((s,id)=>s+products.find(p=>p.id==id).price*cart[id],0);
+ lastSummary=`APNACART — ORDER REQUEST (DEMO)\\nNaam: ${name}\\nMobile: ${phone}\\nAddress: ${address}\\nArea/PIN: ${area||"Not given"}\\n\\nProducts:\\n${lines.join("\\n")}\\n\\nEstimated total: ${rupees(total)}\\nPayment preference: ${payment}\\n\\nPlease confirm stock, final price, and delivery charges before accepting.`;
+ let box=document.getElementById("confirmation");box.textContent="Order summary tayyar hai. WhatsApp par bhejne se pehle stock, final price aur delivery confirm karein.\\n\\n"+lastSummary;box.style.display="block";document.getElementById("copyBtn").style.display="block";document.getElementById("whatsappBtn").style.display="block"});
+document.getElementById("copyBtn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(lastSummary);alert("Order summary copy ho gaya.")}catch(e){alert("Copy nahi hua. Summary ko select karke manually copy karein.")}});
+document.getElementById("whatsappBtn").addEventListener("click",()=>{let number=document.getElementById("sellerWhatsapp").value.replace(/\\D/g,"");if(!/^91[6-9]\\d{9}$/.test(number)){alert("Pehle valid Indian WhatsApp number daalo: 91 ke baad 10 digit mobile number.");document.getElementById("sellerWhatsapp").focus();return}window.open("https://wa.me/"+number+"?text="+encodeURIComponent(lastSummary),"_blank")});
+renderProducts();renderCart();
+</script>
+</body></html>
